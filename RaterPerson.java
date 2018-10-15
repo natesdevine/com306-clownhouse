@@ -1,40 +1,23 @@
-/**
- * This class captures and encapsulate information about the
- * person rating movies and all of that person's ratings 
- * based on the CSV data file that has movie ratings information.
- *
- * @author (your name)
- * @version (a version number or a date)
- */
-
 import java.util.ArrayList;
 
 public class RaterPerson {
-    // private data (instance) fields
     private String raterPersonID;
-    // a person can rate more than one movie. 
-    // We need to store all of those ratings in a data structure like an array list
     private ArrayList<MovieRatingInfo> raterPersonRatings;
     
-    /**
-     * 1-argument constructor for objects of class RaterPerson
-     */
+
     public RaterPerson(String personID) {
         raterPersonID = personID;        
         raterPersonRatings = new ArrayList<MovieRatingInfo>();
     }
     
-    // getter method for raterPersonID
     public String getRaterPersonID() {
         return raterPersonID;
     }
     
-    // finds and returns the number of rating values for this person
     public int findNumberOfRatings() {
         return raterPersonRatings.size();
     }
     
-    // adds a rating for a movie to the list of this person's movie ratings
     public void addRating(String movie, double ratingValue) {
         raterPersonRatings.add(new MovieRatingInfo(movie,ratingValue));
     }
