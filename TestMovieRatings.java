@@ -28,7 +28,6 @@ public class TestMovieRatings  {
         return movieData;        
     }
 
-
     public void testLoadMovieData() {
         String filePath = "data/Rated-Movies-for-Testing.csv";
         ArrayList<MovieInformation> movieData = loadMovieData(filePath);
@@ -47,8 +46,8 @@ public class TestMovieRatings  {
             Double rating = Double.parseDouble(record.get("MovieRating"));
 
             //check if the person exists already, if they do, then just add their rating
-            if (searchRaterID(id, raterData) == true) {
-                RaterPerson person = getRater(id, raterData);
+            if (RaterIDExists(id, raterData) == true) {
+                RaterPerson person = getRaterObject(id, raterData);
                 person.addRating(movieID, rating);
             }
 
@@ -72,79 +71,76 @@ public class TestMovieRatings  {
         }
     }
 
-    public boolean searchRaterID(String id, ArrayList<RaterPerson> raterData){
-        for (RaterPerson person : raterData){
-            if (person.getRaterPersonID().equals(id)) {return true;}   
-        }
-        return false;
-    }
-
-    public RaterPerson getRater(String id, ArrayList<RaterPerson> raterData){
-        for (RaterPerson person : raterData){
-            if (person.getRaterPersonID().equals(id)) {return person;}
-        } 
-        return null;       
-    }
 
     public void findandDisplayMovies(){
         String filePath = "data/Rated-Movies-for-Testing.csv";
         ArrayList<MovieInformation> movieData = loadMovieData(filePath);
-        int count = 0;
 
         //length
-        System.out.println("LENGTH BITCHES");
-        for (MovieInformation movie : movieData){
-            if (movie.getMovieLength() > 135) {System.out.println(movie.toString());}
-        }
+        int length = 135;
+        GreaterThanLength(length, movieData);
 
         //directors
-        System.out.println("DIRECTORS BITCHES");
+        mostProductiveDirectors(movieData);
+
+        //drama
+        String genre = "Drama";
+        MoviesInGenre(genre, movieData);
+    }
+
+    public void mostProductiveDirectors(ArrayList<MovieInformation> movieData){
         HashMap<String, Integer> directors = new HashMap<>();
+        Map.Entry<String,Integer> maxEntry = null;
+
+        //generates hashmap counting the amount of movies each director directed
         for (MovieInformation movie : movieData){
             String director = movie.getMovieDirector();
 
+            //if director is in hashmap, then increment count
             if (directors.containsKey(director)) {directors.put(director, directors.get(director) + 1);}
-            else{directors.put(director, 1);}
+            
+            //if director isn't in hashmap, then add director
+            else {directors.put(director, 1);}
         }
 
-        Map.Entry<String,Integer> maxEntry = null;
+        //finds the most prolific director from hashmap
         for(Map.Entry<String,Integer> entry : directors.entrySet()) {
             if (maxEntry == null || entry.getValue() > maxEntry.getValue()) {
                 maxEntry = entry;
             }
         }
-        System.out.println(maxEntry);
 
-        //drama
-        System.out.println("DRAMA BITCHES");
-        for (MovieInformation movie : movieData){
-            if (movie.getMovieGenre().contains("Drama")) {count++;}
-        }
-        System.out.println("There are " + count + " movies that are dramas");
+        //print result
+        System.out.println("From the dataset, the most prolific director is " + maxEntry.getKey() + " with " + maxEntry.getValue() + " movie produced.");
     }
 
+    public void GreaterThanLength(Integer length, ArrayList<MovieInformation> movieData){
+        for (MovieInformation movie : movieData){
+            if (movie.getMovieLength() > length) {System.out.println(movie.toString());}
+        }
+    }
 
-    public void findandDisplayRaters(){
-        String filePath = "data/Movie-Ratings-for-Testing.csv";
-        ArrayList<RaterPerson> raterData = loadRaterPersonData(filePath);
+    public void MoviesInGenre(String genre, ArrayList<MovieInformation> movieData){
+        Integer count = 0;
 
-        //Part 1
-        String rater_id = "1";
-        RaterPerson person = getRater(rater_id, raterData);
+        for (MovieInformation movie : movieData){
+            if (movie.getMovieGenre().contains(genre)) {count++;}
+        }
+        System.out.println("There are " + count + " movies in the " + genre + " genre.");
+    }
 
-        System.out.println("part 1");
-        System.out.println(person.findNumberOfRatings());
+    public void amountRatingsbyPerson(String id, ArrayList<RaterPerson> raterData){
+        System.out.println("Rater " + id + " has rated " + getRaterObject(id, raterData).findNumberOfRatings() + " movies.");
+    }
 
-        //Part 2
-        System.out.println("\npart 2");
+    public ArrayList<String> mostRatings(ArrayList<RaterPerson> raterData){
         int max = 0; 
-        int freq = 0;
         ArrayList<String> topRaters = new ArrayList<String>();
 
         for (RaterPerson rater : raterData){
             int count = rater.findNumberOfRatings();
+            
             if (count == max){
-                freq++;
                 topRaters.add(rater.getRaterPersonID());
             }
 
@@ -154,35 +150,71 @@ public class TestMovieRatings  {
                 max = count;
             }
         }
-        System.out.println("The most active rater is/are rater(s): " + topRaters + " with " + max + " ratings.");
+        if (topRaters.size() == 1){
+            System.out.println("The most active rater is " + topRaters + " with " + max + " ratings.");
+            return topRaters; 
+        }
+        else{
+            System.out.println("The most active raters are: " + topRaters + " with " + max + " ratings.");   
+            return topRaters; 
+        }
+    }
 
-        //Part 3
-        System.out.println("\nPart 3");
-        String movie_id = "68646";
+    public void amountRatingsbyMovie(String id, ArrayList<RaterPerson> raterData){
         int ratings = 0;
         for (RaterPerson rater : raterData){
-            if (rater.hasRatingValue(movie_id) == true) {ratings++;}
+            if (rater.hasRatingValue(id) == true) {ratings++;}
         }
-        System.out.println(movie_id + " has " + ratings + " ratings");
+        System.out.println("Movie " + id + " has " + ratings + " ratings.");
+    }
+
+    public void findandDisplayRaters(){
+        String filePath = "data/Movie-Ratings-for-Testing.csv";
+        ArrayList<RaterPerson> raterData = loadRaterPersonData(filePath);
+
+        //Part 1
+        String rater_id = "2";
+        amountRatingsbyPerson(rater_id, raterData);
+
+        //Part 2
+        ArrayList<String> topRaters = mostRatings(raterData);
+        
+
+        //Part 3
+        String movie_id = "68646";
+        amountRatingsbyMovie(movie_id, raterData);
 
 
         //Part 4
-        System.out.println("\nPart 4");
-        RaterPerson top = getRater(topRaters.get(0), raterData);
-        System.out.println("Rater " + top.getRaterPersonID() + " has rated the following movies: ");
-        System.out.println(top.getMoviesRated());
+        RaterPerson top = getRaterObject(topRaters.get(0), raterData);
+        System.out.println("Rater " + top.getRaterPersonID() + " has rated the following movies: " + top.getMoviesRated());
 
     }
 
+    public boolean RaterIDExists(String id, ArrayList<RaterPerson> raterData){
+        for (RaterPerson person : raterData){
+            if (person.getRaterPersonID().equals(id)) {return true;}   
+        }
+        return false;
+    }
 
+    public RaterPerson getRaterObject(String id, ArrayList<RaterPerson> raterData){
+        for (RaterPerson person : raterData){
+            if (person.getRaterPersonID().equals(id)) {return person;}
+        } 
+        return null;       
+    }
 
     public static void main(String[] args){
         TestMovieRatings movieRatings = new TestMovieRatings();
 
-        // movieRatings.testLoadMovieData();
-        // movieRatings.testLoadRaterPerson();
+        movieRatings.testLoadMovieData();
+        System.out.println();
+        movieRatings.testLoadRaterPerson();
+        System.out.println();
         movieRatings.findandDisplayMovies();
-        // movieRatings.findandDisplayRaters();
+        System.out.println();
+        movieRatings.findandDisplayRaters();
     }
 
 }
