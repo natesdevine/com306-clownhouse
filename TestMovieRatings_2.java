@@ -75,11 +75,24 @@ public class TestMovieRatings_2 {
 	}
 
 	public String getMovieTitle(String movieID){
+		for (MovieInformation movie : this.listOfMovies){
+			//System.out.println(movie.getMovieID());
+			if (movie.getMovieID().equals(movieID)){
+				return movie.getMovieTitle();
+			}
+		}
 		
+		return null;
 	}
 
 	public String getMovieID(String movieTitle){
-		
+		for (MovieInformation movie : this.listOfMovies){
+			//System.out.println(movie.getMovieTitle());
+			if (movie.getMovieTitle().equals(movieTitle)){
+				return movie.getMovieID();
+			}
+		}
+		return null;
 	}
 
 public static void main(String[] args){
@@ -88,6 +101,9 @@ public static void main(String[] args){
 	System.out.println("Number of rater persons is: " + movieRatings2.findNumberOfRaterPersons());
 	System.out.println(movieRatings2.findIDBasedAverage("68646", 5));
 	System.out.println(movieRatings2.findRatingsAverage(0));
+	System.out.println(movieRatings2.getMovieTitle("1798709"));
+	System.out.println(movieRatings2.getMovieID("Her"));
+
 
 }
 
