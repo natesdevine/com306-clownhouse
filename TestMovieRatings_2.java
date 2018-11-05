@@ -17,10 +17,6 @@ public class TestMovieRatings_2 {
 		TestMovieRatings tester = new TestMovieRatings();
 		this.listOfMovies = tester.loadMovieData(movieInformationFile);
 		this.listOfRaterPersons = tester.loadRaterPersonData(movieRatingInfoFile);
-
-		//System.out.println(this.listOfMovies);
-		System.out.println(this.listOfRaterPersons);
-
 	}
 
 	//default constructor that is chained to the above constructor
@@ -32,8 +28,18 @@ public class TestMovieRatings_2 {
 		return listOfMovies.size();
 	}
 
+	public void testFindNumberOfMovies(){
+		TestMovieRatings_2 movieRatings2 = new TestMovieRatings_2("data/Rated-Movies-for-Testing.csv", "data/Movie-Ratings-for-Testing.csv");
+		System.out.println("Number of movies is: " + movieRatings2.findNumberOfMovies());
+	}
+
 	public int findNumberOfRaterPersons(){
 		return listOfRaterPersons.size();
+	}
+
+	public void testFindNumberOfRaterPersons(){
+		TestMovieRatings_2 movieRatings2 = new TestMovieRatings_2("data/Rated-Movies-for-Testing.csv", "data/Movie-Ratings-for-Testing.csv");
+		System.out.println("Number of rater persons is: " + movieRatings2.findNumberOfRaterPersons());
 	}
 
 	//Gets the amount of times a move has been rated
@@ -57,7 +63,6 @@ public class TestMovieRatings_2 {
 				if (rater.hasRatingValue(movieID)){
 					total += rater.getRatingValues(movieID);
 					tally += 1;
-					//System.out.println(total);
 				}
 			}
 			return total / tally;
@@ -65,18 +70,26 @@ public class TestMovieRatings_2 {
 
 	}
 
+	public void testFindIDBasedAverage(){
+		TestMovieRatings_2 movieRatings2 = new TestMovieRatings_2("data/Rated-Movies-for-Testing.csv", "data/Movie-Ratings-for-Testing.csv");
+		System.out.println(movieRatings2.findIDBasedAverage("68646", 5));
+	}
+
 	public HashMap findRatingsAverage(int minimumNumberOfRaterPersons){
 		HashMap<String, Double> ratingsAverage = new HashMap<>();
 		for (MovieInformation movie : this.listOfMovies){
 			ratingsAverage.put(movie.getMovieID(), findIDBasedAverage(movie.getMovieID(), minimumNumberOfRaterPersons));
 		}
-		//System.out.println(ratingsAverage);
 		return ratingsAverage;
+	}
+
+	public void testFindRatingsAverage(){
+		TestMovieRatings_2 movieRatings2 = new TestMovieRatings_2("data/Rated-Movies-for-Testing.csv", "data/Movie-Ratings-for-Testing.csv");
+		System.out.println(movieRatings2.findRatingsAverage(0));
 	}
 
 	public String getMovieTitle(String movieID){
 		for (MovieInformation movie : this.listOfMovies){
-			//System.out.println(movie.getMovieID());
 			if (movie.getMovieID().equals(movieID)){
 				return movie.getMovieTitle();
 			}
@@ -85,9 +98,13 @@ public class TestMovieRatings_2 {
 		return null;
 	}
 
+	public void testGetMovieTitle(){
+		TestMovieRatings_2 movieRatings2 = new TestMovieRatings_2("data/Rated-Movies-for-Testing.csv", "data/Movie-Ratings-for-Testing.csv");
+		System.out.println(movieRatings2.getMovieTitle("1798709"));
+	}
+
 	public String getMovieID(String movieTitle){
 		for (MovieInformation movie : this.listOfMovies){
-			//System.out.println(movie.getMovieTitle());
 			if (movie.getMovieTitle().equals(movieTitle)){
 				return movie.getMovieID();
 			}
@@ -95,19 +112,19 @@ public class TestMovieRatings_2 {
 		return null;
 	}
 
-public static void main(String[] args){
-	TestMovieRatings_2 movieRatings2 = new TestMovieRatings_2("data/Rated-Movies-for-Testing.csv", "data/Movie-Ratings-for-Testing.csv");
-	System.out.println("Number of movies is: " + movieRatings2.findNumberOfMovies());
-	System.out.println("Number of rater persons is: " + movieRatings2.findNumberOfRaterPersons());
-	System.out.println(movieRatings2.findIDBasedAverage("68646", 5));
-	System.out.println(movieRatings2.findRatingsAverage(0));
-	System.out.println(movieRatings2.getMovieTitle("1798709"));
-	System.out.println(movieRatings2.getMovieID("Her"));
+	public void testGetMovieID(){
+		TestMovieRatings_2 movieRatings2 = new TestMovieRatings_2("data/Rated-Movies-for-Testing.csv", "data/Movie-Ratings-for-Testing.csv");
+		System.out.println(movieRatings2.getMovieID("Her"));
+	}
 
-
-}
-
-
-
+	public static void main(String[] args){
+		TestMovieRatings_2 movieRatings2 = new TestMovieRatings_2("data/Rated-Movies-for-Testing.csv", "data/Movie-Ratings-for-Testing.csv");
+		movieRatings2.testFindNumberOfMovies();
+		movieRatings2.testFindNumberOfRaterPersons();
+		movieRatings2.testFindIDBasedAverage();
+		movieRatings2.testFindRatingsAverage();
+		movieRatings2.testGetMovieTitle();
+		movieRatings2.testGetMovieID();
+	}
 
 }
