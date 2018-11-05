@@ -1,0 +1,3 @@
+to compile, run: javac -cp ".:apache-csv.jar:ConnCollSoftwareEngineering.jar" TestMovieRatings.java
+
+to execute the program: java -cp . TestMovieRatings
